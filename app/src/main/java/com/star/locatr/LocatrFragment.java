@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -31,6 +32,17 @@ public class LocatrFragment extends Fragment {
 
         mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
                 .addApi(LocationServices.API)
+                .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
+                    @Override
+                    public void onConnected(@Nullable Bundle bundle) {
+                        getActivity().invalidateOptionsMenu();
+                    }
+
+                    @Override
+                    public void onConnectionSuspended(int i) {
+
+                    }
+                })
                 .build();
 
     }
@@ -42,9 +54,28 @@ public class LocatrFragment extends Fragment {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+
+        getActivity().invalidateOptionsMenu();
+
+        mGoogleApiClient.connect();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        mGoogleApiClient.disconnect();
+    }
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
 
         inflater.inflate(R.menu.fragment_locatr, menu);
+
+        MenuItem menuItem = menu.findItem(R.id.action_locate);
+        menuItem.setEnabled(mGoogleApiClient.isConnected());
     }
 }

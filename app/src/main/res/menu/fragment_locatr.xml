@@ -7,7 +7,7 @@
         android:orderInCategory="100"
         app:showAsAction="never"/>
 
-    <item android:id="@+id/:action_locate"
+    <item android:id="@+id/action_locate"
         android:icon="@android:drawable/ic_menu_compass"
         android:title="@string/search"
         android:orderInCategory="100"
