@@ -50,4 +50,5 @@ public class GalleryItem {
     public String toString() {
         return mCaption;
     }
+
 }

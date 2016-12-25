@@ -50,7 +50,7 @@ public class LocatrFragment extends Fragment {
                 .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
                     @Override
                     public void onConnected(@Nullable Bundle bundle) {
-                        getActivity().invalidateOptionsMenu();
+                        getActivity().supportInvalidateOptionsMenu();
                     }
 
                     @Override
@@ -62,7 +62,6 @@ public class LocatrFragment extends Fragment {
 
     }
 
-    @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -77,7 +76,7 @@ public class LocatrFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
-        getActivity().invalidateOptionsMenu();
+        getActivity().supportInvalidateOptionsMenu();
 
         mGoogleApiClient.connect();
     }
@@ -175,4 +174,5 @@ public class LocatrFragment extends Fragment {
             mImageView.setImageBitmap(mBitmap);
         }
     }
+
 }

@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.support.v4.app.Fragment;
 
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 
 public class LocatrActivity extends SingleFragmentActivity {
@@ -20,10 +21,12 @@ public class LocatrActivity extends SingleFragmentActivity {
     protected void onResume() {
         super.onResume();
 
-        int errorCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+        GoogleApiAvailability googleApiAvailability = GoogleApiAvailability.getInstance();
+
+        int errorCode = googleApiAvailability.isGooglePlayServicesAvailable(this);
 
         if (errorCode != ConnectionResult.SUCCESS) {
-            Dialog errorDialog = GooglePlayServicesUtil.getErrorDialog(errorCode, this,
+            Dialog errorDialog = googleApiAvailability.getErrorDialog(this, errorCode,
                     REQUEST_ERROR, new DialogInterface.OnCancelListener() {
                         @Override
                         public void onCancel(DialogInterface dialog) {
@@ -34,4 +37,5 @@ public class LocatrActivity extends SingleFragmentActivity {
             errorDialog.show();
         }
     }
+
 }
