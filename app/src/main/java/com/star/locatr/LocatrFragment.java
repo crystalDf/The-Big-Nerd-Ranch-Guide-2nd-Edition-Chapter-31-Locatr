@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -19,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
@@ -26,11 +28,14 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class LocatrFragment extends Fragment {
 
     private static final String TAG = "LocatrFragment";
+
+    private static final int REQUEST_CODE = 0;
 
     private ImageView mImageView;
     private GoogleApiClient mGoogleApiClient;
@@ -111,35 +116,66 @@ public class LocatrFragment extends Fragment {
 
     private void findImage() {
 
-        LocationRequest locationRequest = LocationRequest.create();
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        locationRequest.setNumUpdates(1);
-        locationRequest.setInterval(0);
+        List<String> permissionList = new ArrayList<>();
 
         if (ActivityCompat.checkSelfPermission(getActivity(),
-                Manifest.permission.ACCESS_FINE_LOCATION) !=
-                PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(getActivity(),
-                        Manifest.permission.ACCESS_COARSE_LOCATION) !=
-                        PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            permissionList.add(Manifest.permission.ACCESS_FINE_LOCATION);
         }
 
-        LocationServices.FusedLocationApi
-                .requestLocationUpdates(mGoogleApiClient, locationRequest, new LocationListener() {
-                    @Override
-                    public void onLocationChanged(Location location) {
-                        Log.i(TAG, "Got a fix: " + location);
-                        new SearchTask().execute(location);
+        if (ActivityCompat.checkSelfPermission(getActivity(),
+                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            permissionList.add(Manifest.permission.ACCESS_COARSE_LOCATION);
+        }
+
+        if (!permissionList.isEmpty()) {
+            ActivityCompat.requestPermissions(getActivity(),
+                    permissionList.toArray(new String[permissionList.size()]), REQUEST_CODE);
+        } else {
+            requestLocationUpdates();
+        }
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        switch (requestCode) {
+            case REQUEST_CODE:
+                if (grantResults.length > 0) {
+                    for (int grantResult : grantResults) {
+                        if (grantResult != PackageManager.PERMISSION_GRANTED) {
+                            Toast.makeText(getActivity(), "Some permission denied. ",
+                                    Toast.LENGTH_LONG).show();
+                            return;
+                        }
                     }
-                });
+                    requestLocationUpdates();
+                }
+        }
+
+    }
+
+    private void requestLocationUpdates() {
+
+        try {
+            LocationRequest locationRequest = LocationRequest.create();
+            locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+            locationRequest.setNumUpdates(1);
+            locationRequest.setInterval(0);
+
+            LocationServices.FusedLocationApi
+                    .requestLocationUpdates(mGoogleApiClient, locationRequest, new LocationListener() {
+                        @Override
+                        public void onLocationChanged(Location location) {
+                            Log.i(TAG, "Got a fix: " + location);
+                            new SearchTask().execute(location);
+                        }
+                    });
+        } catch (SecurityException se) {
+            se.printStackTrace();
+        }
     }
 
     private class SearchTask extends AsyncTask<Location, Void, Void> {
