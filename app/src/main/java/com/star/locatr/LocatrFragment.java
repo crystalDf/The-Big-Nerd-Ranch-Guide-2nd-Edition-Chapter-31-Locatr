@@ -22,6 +22,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
@@ -56,11 +57,18 @@ public class LocatrFragment extends Fragment {
                     @Override
                     public void onConnected(@Nullable Bundle bundle) {
                         getActivity().supportInvalidateOptionsMenu();
+                        Log.i(TAG, "Connected");
                     }
 
                     @Override
                     public void onConnectionSuspended(int i) {
 
+                    }
+                })
+                .addOnConnectionFailedListener(new GoogleApiClient.OnConnectionFailedListener() {
+                    @Override
+                    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+                        Log.i(TAG, "Connection Failed");
                     }
                 })
                 .build();
