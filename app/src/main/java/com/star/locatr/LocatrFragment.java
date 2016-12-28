@@ -132,7 +132,7 @@ public class LocatrFragment extends Fragment {
             ActivityCompat.requestPermissions(getActivity(),
                     permissionList.toArray(new String[permissionList.size()]), REQUEST_CODE);
         } else {
-            requestLocationUpdates();
+            doFindImage();
         }
 
     }
@@ -151,13 +151,16 @@ public class LocatrFragment extends Fragment {
                             return;
                         }
                     }
-                    requestLocationUpdates();
+                    doFindImage();
                 }
+                break;
+            default:
+                break;
         }
 
     }
 
-    private void requestLocationUpdates() {
+    private void doFindImage() {
 
         try {
             LocationRequest locationRequest = LocationRequest.create();
