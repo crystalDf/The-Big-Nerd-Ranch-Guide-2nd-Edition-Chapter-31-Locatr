@@ -97,7 +97,7 @@ public class LocatrFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
 
-        inflater.inflate(R.menu.fragment_locatr, menu);
+        inflater.inflate(R.menu.menu_locatr, menu);
 
         MenuItem menuItem = menu.findItem(R.id.action_locate);
         menuItem.setEnabled(mGoogleApiClient.isConnected());
