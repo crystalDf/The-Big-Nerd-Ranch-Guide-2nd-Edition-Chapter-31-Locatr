@@ -20,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -39,6 +40,8 @@ public class LocatrFragment extends Fragment {
     private static final int REQUEST_CODE = 0;
 
     private ImageView mImageView;
+    private ProgressBar mProgressBar;
+
     private GoogleApiClient mGoogleApiClient;
 
     public static LocatrFragment newInstance() {
@@ -82,6 +85,8 @@ public class LocatrFragment extends Fragment {
 
         mImageView = (ImageView) view.findViewById(R.id.image);
 
+        mProgressBar = (ProgressBar) view.findViewById(R.id.fragment_progress_bar);
+
         return view;
     }
 
@@ -116,6 +121,7 @@ public class LocatrFragment extends Fragment {
         switch (item.getItemId()) {
             case R.id.action_locate:
                 findImage();
+                showProgressBar(true);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -219,6 +225,15 @@ public class LocatrFragment extends Fragment {
         @Override
         protected void onPostExecute(Void aVoid) {
             mImageView.setImageBitmap(mBitmap);
+            showProgressBar(false);
+        }
+    }
+
+    private void showProgressBar(boolean isShown) {
+        if (isShown) {
+            mProgressBar.setVisibility(View.VISIBLE);
+        } else {
+            mProgressBar.setVisibility(View.INVISIBLE);
         }
     }
 
